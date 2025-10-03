@@ -1,0 +1,13 @@
+{
+  "testEnvironment": "node",
+  "collectCoverage": true,
+  "coverageDirectory": "coverage",
+  "coverageReporters": ["text", "lcov", "html"],
+  "testMatch": [
+    "**/src/**/*.test.js",
+    "**/tests/**/*.test.js"
+  ],
+  "verbose": true,
+  "bail": true,
+  "forceExit": true
+}

@@ -1,0 +1,101 @@
+# Configuração GitFlow conforme requisitos da somativa
+trigger:
+  branches:
+    include:
+    - main
+    - develop
+    - release/*
+  paths:
+    exclude:
+    - README.md
+    - docs/*
+
+# Execução automatizada de hora em hora na branch develop
+schedules:
+- cron: "0 * * * *"
+  displayName: "Execução de hora em hora"
+  branches:
+    include:
+    - develop
+  always: true
+
+# Configuração para Pull Requests
+pr:
+  branches:
+    include:
+    - main
+    - release/*
+  paths:
+    exclude:
+    - README.md
+    - docs/*
+
+## Roda o build no agente linux
+stages:
+- stage: Build
+  displayName: "Estágio Build (Linux)"
+  pool:
+    vmImage: 'ubuntu-latest'
+  jobs:
+  - job: Build
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '16.x'
+      displayName: 'Instalar Node.js'
+
+    - bash: npm install
+      displayName: 'Instalar dependências'
+
+    - bash: npm run build
+      displayName: 'Build do projeto'
+
+    - bash: |
+        if [ ! -d dist ]; then
+          mkdir -p dist
+          echo "placeholder" > dist/.keep
+        fi
+      displayName: 'Garantir pasta dist/'
+
+    - task: PublishPipelineArtifact@1
+      inputs:
+        targetPath: 'dist'
+        artifact: 'appBuild'
+      displayName: 'Publicar artefato do build'
+
+## Roda o teste no agente Mac OS
+- stage: Test
+  displayName: "Estágio Teste (Mac OS)"
+  dependsOn: Build
+  pool:
+    vmImage: 'macos-latest'
+  jobs:
+  - job: Test
+    steps:
+    - bash: |
+        cd "$(Build.SourcesDirectory)"
+        npm install
+        npm test
+      displayName: 'Rodar testes unitários'
+      continueOnError: false
+
+## Faz o deploy no agente Windows
+- stage: Deploy
+  displayName: "Estágio Deploy (Windows)"
+  dependsOn: Test
+  pool:
+    vmImage: 'windows-latest'
+  jobs:
+  - job: Deploy
+    steps:
+    - task: DownloadPipelineArtifact@2
+      inputs:
+        artifact: 'appBuild'
+        path: '$(Pipeline.Workspace)\appBuild'
+      displayName: "Baixar artefato do build"
+
+    - pwsh: |
+        New-Item -ItemType Directory -Force -Path deploy | Out-Null
+        Copy-Item -Path "$(Pipeline.Workspace)\appBuild\*" -Destination ".\deploy" -Recurse -Force
+        Write-Host "Deploy simulado concluído em .\deploy"
+      displayName: 'Simular Deploy (Windows PowerShell)'

@@ -1,0 +1,20 @@
+{
+  "name": "ola-nodejs",
+  "version": "1.0.0",
+  "description": "TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project.",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx jest",
+    "build": "echo 'Build executado com sucesso!'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://pucpr-estudantes@dev.azure.com/pucpr-estudantes/exemplo/_git/ola-nodejs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "ola-nodejs",
+  "version": "1.0.0",
+  "description": "DevOps Tasks",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "echo 'Build executado com sucesso!'",
+    "start": "node src/index.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://pucpr-estudantes@dev.azure.com/pucpr-estudantes/exemplo/_git/ola-nodejs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
